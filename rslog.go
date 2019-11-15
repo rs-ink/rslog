@@ -92,9 +92,6 @@ func (rl RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
 func (rl RsLog) OutPcF(pcInfo PcInfo, level RLevel, f string, v ...interface{}) {
 	targetLevel := rl.Conf.GetRLevelPc(pcInfo)
 	if level >= targetLevel {
-		fmt.Println(targetLevel)
-		fmt.Println(level)
-
 		rl.mu.Lock()
 		defer rl.mu.Unlock()
 		defer rl.buf.Reset()
