@@ -35,6 +35,16 @@ func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
 	}
 }
 
+//代码段设置Level
+func (rc RConf) SetRLevel(level RLevel, callDepth int) {
+	pcInfo := GetPcInfo(callDepth+1, rc.ProjectName)
+	funcNames := GetRealFuncName(pcInfo, rc.ProjectName)
+	if funcNames[len(funcNames)-1] == "init" {
+		funcNames = funcNames[:len(funcNames)-1]
+	}
+	rc.MapLevel.LoadOrStore(strings.ToLower(strings.Join(funcNames, funcSep)), level)
+}
+
 func (rc RConf) GetRLevel(callDepth int) RLevel {
 	return rc.GetRLevelPc(GetPcInfo(callDepth+1, rc.ProjectName))
 }
@@ -44,16 +54,6 @@ func NewRConf() *RConf {
 		MapWriter: make(map[RLevel]io.Writer),
 		MapLevel:  &sync.Map{},
 	}
-}
-
-//代码段设置Level
-func (rc RConf) SetRLevel(level RLevel, callDepth int) {
-	pcInfo := GetPcInfo(callDepth+1, rc.ProjectName)
-	funcNames := GetRealFuncName(pcInfo, rc.ProjectName)
-	if funcNames[len(funcNames)-1] == "init" {
-		funcNames = funcNames[:len(funcNames)-1]
-	}
-	rc.MapLevel.LoadOrStore(strings.ToLower(strings.Join(funcNames, funcSep)), level)
 }
 
 func (rc *RConf) SetWriter(writer io.Writer) {
