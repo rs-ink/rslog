@@ -1,7 +1,6 @@
 package rslog
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -24,7 +23,7 @@ func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
 	fs := strings.Split(funcNames, funcSep)
 	var i int
 	for i = len(fs); i >= 1; i-- {
-		if l, ok := rc.MapLevel.Load(strings.Join(fs[:i], funcSep)); ok {
+		if l, ok := rc.MapLevel.Load(strings.ToLower(strings.Join(fs[:i], funcSep))); ok {
 			return l.(RLevel)
 		}
 	}
@@ -54,8 +53,7 @@ func (rc RConf) SetRLevel(level RLevel, callDepth int) {
 	if funcNames[len(funcNames)-1] == "init" {
 		funcNames = funcNames[:len(funcNames)-1]
 	}
-	fmt.Sprintln(funcNames, level)
-	rc.MapLevel.LoadOrStore(strings.Join(funcNames, funcSep), level)
+	rc.MapLevel.LoadOrStore(strings.ToLower(strings.Join(funcNames, funcSep)), level)
 }
 
 func (rc *RConf) SetWriter(writer io.Writer) {

@@ -6,9 +6,9 @@ import (
 )
 
 func init() {
-	rslog.DefaultRsLog.Conf.SetProjectName("rslog")
-	rslog.DefaultRsLog.Conf.SetRootRLevel(rslog.LevelDEBUG)
-	rslog.DefaultRsLog.Conf.SetRLevel(rslog.LevelINFO, 0)
+	rslog.SetProjectName("rslog")
+	rslog.SetRootRLevel(rslog.LevelDEBUG)
+	rslog.SetRLevel(rslog.LevelINFO)
 }
 
 func TestRsLog(t *testing.T) {

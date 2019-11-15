@@ -21,6 +21,18 @@ func init() {
 	}
 }
 
+func SetProjectName(name string) {
+	DefaultRsLog.Conf.SetProjectName(name)
+}
+
+func SetRLevel(level RLevel) {
+	DefaultRsLog.Conf.SetRLevel(level, 1)
+}
+
+func SetRootRLevel(level RLevel) {
+	DefaultRsLog.Conf.SetRootRLevel(level)
+}
+
 func Debug(v ...interface{}) {
 	DefaultRsLog.Out(1, LevelDEBUG, v...)
 }
