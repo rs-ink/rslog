@@ -54,11 +54,11 @@ func ErrorF(f string, v ...interface{}) {
 }
 
 func (rl RsLog) Out(callDepth int, level RLevel, v ...interface{}) {
-	rl.OutPc(GetPcInfo(callDepth+1), level, v...)
+	rl.OutPc(GetPcInfo(callDepth+1, rl.Conf.GetProjectName()), level, v...)
 }
 
 func (rl RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
-	rl.OutPcF(GetPcInfo(callDepth+1), level, f, v...)
+	rl.OutPcF(GetPcInfo(callDepth+1, rl.Conf.GetProjectName()), level, f, v...)
 }
 
 func (rl RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {

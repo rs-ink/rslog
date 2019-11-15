@@ -8,7 +8,7 @@ import (
 func init() {
 	rslog.DefaultRsLog.Conf.SetProjectName("rslog")
 	rslog.DefaultRsLog.Conf.SetRootRLevel(rslog.LevelDEBUG)
-	rslog.DefaultRsLog.Conf.SetRLevel(rslog.LevelINFO)
+	rslog.DefaultRsLog.Conf.SetRLevel(rslog.LevelINFO, 0)
 }
 
 func TestRsLog(t *testing.T) {

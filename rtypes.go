@@ -3,6 +3,7 @@ package rslog
 import (
 	"io"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -43,8 +44,16 @@ type PcInfo struct {
 	Ok   bool
 }
 
-func GetPcInfo(callDepth int) (pcInfo PcInfo) {
-	pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + 1)
+func GetPcInfo(callDepth int, projectName string) (pcInfo PcInfo) {
+	for i := 1; i < 10; i++ {
+		pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + i)
+		if projectName == "" {
+			return
+		}
+		if strings.Contains(pcInfo.File, projectName) && !strings.Contains(pcInfo.File, "pkg") {
+			return
+		}
+	}
 	return
 }
 
@@ -55,7 +64,7 @@ type RsLoggerConfig interface {
 	GetProjectName() string
 	GetWriter(level RLevel) io.Writer
 	SetRootRLevel(level RLevel)
-	SetRLevel(level RLevel)
+	SetRLevel(level RLevel, callDepth int)
 	GetRLevelPc(info PcInfo) RLevel
 	GetRLevel(callDepth int) RLevel
 	IsDebug() bool

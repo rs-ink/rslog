@@ -37,7 +37,7 @@ func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
 }
 
 func (rc RConf) GetRLevel(callDepth int) RLevel {
-	return rc.GetRLevelPc(GetPcInfo(callDepth + 1))
+	return rc.GetRLevelPc(GetPcInfo(callDepth+1, rc.ProjectName))
 }
 
 func NewRConf() *RConf {
@@ -48,8 +48,8 @@ func NewRConf() *RConf {
 }
 
 //代码段设置Level
-func (rc RConf) SetRLevel(level RLevel) {
-	pcInfo := GetPcInfo(1)
+func (rc RConf) SetRLevel(level RLevel, callDepth int) {
+	pcInfo := GetPcInfo(callDepth+1, rc.ProjectName)
 	funcNames := GetRealFuncName(pcInfo, rc.ProjectName)
 	if funcNames[len(funcNames)-1] == "init" {
 		funcNames = funcNames[:len(funcNames)-1]
