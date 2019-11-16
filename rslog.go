@@ -21,48 +21,48 @@ func init() {
 	}
 }
 
-func SetProjectName(name string) {
-	DefaultRsLog.Conf.SetProjectName(name)
+func (rl RsLog) SetProjectName(name string) {
+	rl.Conf.SetProjectName(name)
 }
 
-func SetRLevel(level RLevel) {
-	DefaultRsLog.Conf.SetRLevel(level, 1)
+func (rl RsLog) SetRLevel(level RLevel) {
+	rl.Conf.SetRLevel(level, 1)
 }
 
-func SetRootRLevel(level RLevel) {
-	DefaultRsLog.Conf.SetRootRLevel(level)
+func (rl RsLog) SetRootRLevel(level RLevel) {
+	rl.Conf.SetRootRLevel(level)
 }
 
-func Debug(v ...interface{}) {
-	DefaultRsLog.Out(1, LevelDEBUG, v...)
+func (rl RsLog) Debug(v ...interface{}) {
+	rl.Out(1, LevelDEBUG, v...)
 }
 
-func Info(v ...interface{}) {
-	DefaultRsLog.Out(1, LevelINFO, v...)
+func (rl RsLog) Info(v ...interface{}) {
+	rl.Out(1, LevelINFO, v...)
 }
 
-func Warn(v ...interface{}) {
-	DefaultRsLog.Out(1, LevelWARN, v...)
+func (rl RsLog) Warn(v ...interface{}) {
+	rl.Out(1, LevelWARN, v...)
 }
 
-func Error(v ...interface{}) {
-	DefaultRsLog.Out(1, LevelERROR, v...)
+func (rl RsLog) Error(v ...interface{}) {
+	rl.Out(1, LevelERROR, v...)
 }
 
-func DebugF(f string, v ...interface{}) {
-	DefaultRsLog.OutF(1, LevelDEBUG, f, v...)
+func (rl RsLog) DebugF(f string, v ...interface{}) {
+	rl.OutF(1, LevelDEBUG, f, v...)
 }
 
-func InfoF(f string, v ...interface{}) {
-	DefaultRsLog.OutF(1, LevelINFO, f, v...)
+func (rl RsLog) InfoF(f string, v ...interface{}) {
+	rl.OutF(1, LevelINFO, f, v...)
 }
 
-func WarnF(f string, v ...interface{}) {
-	DefaultRsLog.OutF(1, LevelWARN, f, v...)
+func (rl RsLog) WarnF(f string, v ...interface{}) {
+	rl.OutF(1, LevelWARN, f, v...)
 }
 
-func ErrorF(f string, v ...interface{}) {
-	DefaultRsLog.OutF(1, LevelERROR, f, v...)
+func (rl RsLog) ErrorF(f string, v ...interface{}) {
+	rl.OutF(1, LevelERROR, f, v...)
 }
 
 func (rl RsLog) Out(callDepth int, level RLevel, v ...interface{}) {

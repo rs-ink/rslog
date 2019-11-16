@@ -88,4 +88,7 @@ type RsLoggerI interface {
 	InfoF(f string, v ...interface{})
 	WarnF(f string, v ...interface{})
 	ErrorF(f string, v ...interface{})
+	SetProjectName(name string)
+	SetRLevel(level RLevel)
+	SetRootRLevel(level RLevel)
 }

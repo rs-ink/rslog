@@ -5,19 +5,22 @@ import (
 	"testing"
 )
 
+var log *rslog.RsLog
+
 func init() {
-	rslog.SetProjectName("rslog")
-	rslog.SetRootRLevel(rslog.LevelDEBUG)
-	rslog.SetRLevel(rslog.LevelINFO)
+	log = rslog.DefaultRsLog
+	log.SetProjectName("rslog")
+	log.SetRootRLevel(rslog.LevelDEBUG)
+	log.SetRLevel(rslog.LevelINFO)
 }
 
 func TestRsLog(t *testing.T) {
-	rslog.Warn("asdfasdfasdf")
+	log.Warn("asdfasdfasdf")
 }
 
 func BenchmarkRsLog(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
-		rslog.Debug("asdfasdfasdf")
+		log.Debug("asdfasdfasdf")
 	}
 }
