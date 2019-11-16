@@ -1,7 +1,7 @@
 package example
 
 import (
-	"rslog"
+	"github.com/rs-ink/rslog"
 	"testing"
 )
 
