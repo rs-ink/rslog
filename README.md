@@ -4,11 +4,11 @@
 ```` 
 func init() {
 	//过滤显示项目名称
-	rslog.DefaultRsLog.Conf.SetProjectName("rslog")
+	rslog.SetProjectName("rslog")
 	//设置根Level 
-	rslog.DefaultRsLog.Conf.SetRootRLevel(rslog.LevelDEBUG)
+	rslog.SetRootRLevel(rslog.LevelDEBUG)
 	设置pkg根Level 
-	rslog.DefaultRsLog.Conf.SetRLevel(rslog.LevelINFO)
+	rslog.SetRLevel(rslog.LevelINFO)
 }
 
 func TestRsLog(t *testing.T) {

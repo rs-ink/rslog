@@ -21,6 +21,50 @@ func init() {
 	}
 }
 
+func SetProjectName(name string) {
+	DefaultRsLog.SetProjectName(name)
+}
+
+func SetRLevel(level RLevel) {
+	DefaultRsLog.Conf.SetRLevel(level, 1)
+}
+
+func SetRootRLevel(level RLevel) {
+	DefaultRsLog.SetRootRLevel(level)
+}
+
+func Debug(v ...interface{}) {
+	DefaultRsLog.Out(1, LevelDEBUG, v...)
+}
+
+func Info(v ...interface{}) {
+	DefaultRsLog.Out(1, LevelINFO, v...)
+}
+
+func Warn(v ...interface{}) {
+	DefaultRsLog.Out(1, LevelWARN, v...)
+}
+
+func Error(v ...interface{}) {
+	DefaultRsLog.Out(1, LevelERROR, v...)
+}
+
+func DebugF(f string, v ...interface{}) {
+	DefaultRsLog.OutF(1, LevelDEBUG, f, v...)
+}
+
+func InfoF(f string, v ...interface{}) {
+	DefaultRsLog.OutF(1, LevelINFO, f, v...)
+}
+
+func WarnF(f string, v ...interface{}) {
+	DefaultRsLog.OutF(1, LevelWARN, f, v...)
+}
+
+func ErrorF(f string, v ...interface{}) {
+	DefaultRsLog.OutF(1, LevelERROR, f, v...)
+}
+
 func (rl RsLog) SetProjectName(name string) {
 	rl.Conf.SetProjectName(name)
 }
