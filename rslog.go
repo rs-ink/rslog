@@ -65,6 +65,21 @@ func ErrorF(f string, v ...interface{}) {
 	DefaultRsLog.OutF(1, LevelERROR, f, v...)
 }
 
+func Out(callDepth int, level RLevel, v ...interface{}) {
+	DefaultRsLog.OutPc(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName()), level, v...)
+}
+
+func OutF(callDepth int, level RLevel, f string, v ...interface{}) {
+	DefaultRsLog.OutPcF(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName()), level, f, v...)
+}
+func OutPcF(pcInfo PcInfo, level RLevel, f string, v ...interface{}) {
+	DefaultRsLog.OutPcF(pcInfo, level, f, v...)
+}
+
+func OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
+	DefaultRsLog.OutPc(pcInfo, level, v...)
+}
+
 func (rl RsLog) SetProjectName(name string) {
 	rl.Conf.SetProjectName(name)
 }
