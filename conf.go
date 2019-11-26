@@ -14,8 +14,17 @@ type RConf struct {
 	Debug         bool
 	RootLevel     RLevel
 	ProjectName   string
+	direct        bool
 	mu            sync.Mutex
 	MapLevel      *sync.Map
+}
+
+func (rc RConf) IsDirect() bool {
+	return rc.direct
+}
+
+func (rc *RConf) SetDirect(direct bool) {
+	rc.direct = direct
 }
 
 func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
@@ -49,11 +58,15 @@ func (rc RConf) GetRLevel(callDepth int) RLevel {
 	return rc.GetRLevelPc(GetPcInfo(callDepth+1, rc.ProjectName))
 }
 
-func NewRConf() *RConf {
-	return &RConf{
+func NewRConf(direct ...bool) (conf *RConf) {
+	conf = &RConf{
 		MapWriter: make(map[RLevel]io.Writer),
 		MapLevel:  &sync.Map{},
 	}
+	if len(direct) > 0 {
+		conf.SetDirect(direct[0])
+	}
+	return
 }
 
 func (rc *RConf) SetWriter(writer io.Writer) {

@@ -44,9 +44,12 @@ type PcInfo struct {
 	Ok   bool
 }
 
-func GetPcInfo(callDepth int, projectName string) (pcInfo PcInfo) {
+func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
 	for i := 1; i < 10; i++ {
 		pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + i)
+		if len(direct) > 0 && direct[0] {
+			return
+		}
 		if projectName == "" {
 			return
 		}
@@ -69,6 +72,8 @@ type RsLoggerConfig interface {
 	GetRLevel(callDepth int) RLevel
 	IsDebug() bool
 	ScanConfDuration(duration time.Duration)
+	IsDirect() bool
+	SetDirect(direct bool)
 }
 
 type RsLogger interface {

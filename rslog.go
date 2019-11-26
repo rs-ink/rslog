@@ -16,8 +16,12 @@ type RsLog struct {
 var DefaultRsLog *RsLog
 
 func init() {
-	DefaultRsLog = &RsLog{
-		Conf: NewRConf(),
+	DefaultRsLog = NewRsLog(true)
+}
+
+func NewRsLog(direct ...bool) *RsLog {
+	return &RsLog{
+		Conf: NewRConf(direct...),
 	}
 }
 
