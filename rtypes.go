@@ -45,6 +45,7 @@ type PcInfo struct {
 }
 
 func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
+
 	for i := 1; i < 10; i++ {
 		pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + i)
 		if len(direct) > 0 && direct[0] {

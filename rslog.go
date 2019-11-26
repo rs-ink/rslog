@@ -70,11 +70,11 @@ func ErrorF(f string, v ...interface{}) {
 }
 
 func Out(callDepth int, level RLevel, v ...interface{}) {
-	DefaultRsLog.OutPc(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName()), level, v...)
+	DefaultRsLog.OutPc(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName(), DefaultRsLog.Conf.IsDirect()), level, v...)
 }
 
 func OutF(callDepth int, level RLevel, f string, v ...interface{}) {
-	DefaultRsLog.OutPcF(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName()), level, f, v...)
+	DefaultRsLog.OutPcF(GetPcInfo(callDepth+1, DefaultRsLog.Conf.GetProjectName(), DefaultRsLog.Conf.IsDirect()), level, f, v...)
 }
 func OutPcF(pcInfo PcInfo, level RLevel, f string, v ...interface{}) {
 	DefaultRsLog.OutPcF(pcInfo, level, f, v...)
@@ -129,11 +129,11 @@ func (rl RsLog) ErrorF(f string, v ...interface{}) {
 }
 
 func (rl RsLog) Out(callDepth int, level RLevel, v ...interface{}) {
-	rl.OutPc(GetPcInfo(callDepth+1, rl.Conf.GetProjectName()), level, v...)
+	rl.OutPc(GetPcInfo(callDepth+1, rl.Conf.GetProjectName(), rl.Conf.IsDirect()), level, v...)
 }
 
 func (rl RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
-	rl.OutPcF(GetPcInfo(callDepth+1, rl.Conf.GetProjectName()), level, f, v...)
+	rl.OutPcF(GetPcInfo(callDepth+1, rl.Conf.GetProjectName(), rl.Conf.IsDirect()), level, f, v...)
 }
 
 func (rl RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
