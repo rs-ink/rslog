@@ -4,7 +4,6 @@ import (
 	"github.com/rs-ink/rslog"
 	"io/ioutil"
 	"os"
-	"syscall"
 	"testing"
 	"time"
 )
@@ -22,12 +21,28 @@ func (w writer) Write(p []byte) (n int, err error) {
 	return len(p), ioutil.WriteFile(time.Now().Format("./logs/20060102150405.log"), p, os.ModeAppend)
 }
 
+var buildArgs []string
+var _ = initBuild()
+
+func initBuild() bool {
+	buildArgs = os.Args
+	return true
+}
+
 func TestRsLog(t *testing.T) {
-	envs := syscall.Environ()
+	//ps := strings.Split(os.Getenv("GOMOD"), string(os.PathSeparator))
+	envs := os.Environ()
 	for _, env := range envs {
 		rslog.Warn(env)
 	}
-
+	rslog.Warn("===========================")
+	for _, arg := range os.Args {
+		rslog.Warn(arg)
+	}
+	rslog.Warn("===========================")
+	for _, arg := range buildArgs {
+		rslog.Warn(arg)
+	}
 }
 
 func BenchmarkRsLog(b *testing.B) {

@@ -58,8 +58,11 @@ func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo
 		if projectName == "" {
 			return
 		}
-		if strings.Contains(pcInfo.File, projectName) && !strings.HasPrefix(pcInfo.File, pkgCache) && !strings.HasPrefix(pcInfo.File, goROOT) && !strings.HasPrefix(pcInfo.File, goPath) {
-			return
+		if strings.Contains(pcInfo.File, projectName) &&
+			(pkgCache == "" || !strings.HasPrefix(pcInfo.File, pkgCache)) &&
+			(goROOT == "" || !strings.HasPrefix(pcInfo.File, goROOT)) &&
+			(goPath == "" || !strings.HasPrefix(pcInfo.File, goPath)) {
+			break
 		}
 	}
 	return
