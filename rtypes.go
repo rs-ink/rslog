@@ -46,6 +46,8 @@ type PcInfo struct {
 }
 
 var pkgCache = os.Getenv("GOMODCACHE")
+var goROOT = os.Getenv("GOROOT")
+var goPath = os.Getenv("GOPATH")
 
 func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
 	for i := 1; i < 10; i++ {
@@ -56,7 +58,7 @@ func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo
 		if projectName == "" {
 			return
 		}
-		if strings.Contains(pcInfo.File, projectName) && strings.HasPrefix(pcInfo.File, pkgCache) {
+		if strings.Contains(pcInfo.File, projectName) && !strings.HasPrefix(pcInfo.File, pkgCache) && !strings.HasPrefix(pcInfo.File, goROOT) && !strings.HasPrefix(pcInfo.File, goPath) {
 			return
 		}
 	}
