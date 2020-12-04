@@ -137,7 +137,11 @@ func (rl *RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
 	rl.OutPcF(GetPcInfo(callDepth+1, rl.Conf.GetProjectName(), rl.Conf.IsDirect()), level, f, v...)
 }
 
-var lineSeparator = os.Getenv("line.separator")
+var lineSeparator string
+
+func init() {
+	lineSeparator = os.Getenv("line.separator")
+}
 
 func (rl *RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
 	targetLevel := rl.Conf.GetRLevelPc(pcInfo)
