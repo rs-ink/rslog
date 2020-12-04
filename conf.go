@@ -19,7 +19,7 @@ type RConf struct {
 	MapLevel      *sync.Map
 }
 
-func (rc RConf) IsDirect() bool {
+func (rc *RConf) IsDirect() bool {
 	return rc.direct
 }
 
@@ -27,7 +27,7 @@ func (rc *RConf) SetDirect(direct bool) {
 	rc.direct = direct
 }
 
-func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
+func (rc *RConf) GetRLevelPc(info PcInfo) RLevel {
 	funcNames := GetFuncName(info, rc.ProjectName)
 	fs := strings.Split(funcNames, funcSep)
 	var i int
@@ -45,7 +45,7 @@ func (rc RConf) GetRLevelPc(info PcInfo) RLevel {
 }
 
 //代码段设置Level
-func (rc RConf) SetRLevel(level RLevel, callDepth int) {
+func (rc *RConf) SetRLevel(level RLevel, callDepth int) {
 	pcInfo := GetPcInfo(callDepth+1, rc.ProjectName)
 	funcNames := GetRealFuncName(pcInfo, rc.ProjectName)
 	if funcNames[len(funcNames)-1] == "init" {
@@ -54,7 +54,7 @@ func (rc RConf) SetRLevel(level RLevel, callDepth int) {
 	rc.MapLevel.LoadOrStore(strings.ToLower(strings.Join(funcNames, funcSep)), level)
 }
 
-func (rc RConf) GetRLevel(callDepth int) RLevel {
+func (rc *RConf) GetRLevel(callDepth int) RLevel {
 	return rc.GetRLevelPc(GetPcInfo(callDepth+1, rc.ProjectName))
 }
 
@@ -86,11 +86,10 @@ func (rc *RConf) SetProjectName(name string) {
 	rc.ProjectName = name
 }
 
-func (rc RConf) GetProjectName() string {
+func (rc *RConf) GetProjectName() string {
 	return rc.ProjectName
 }
-
-func (rc RConf) GetWriter(level RLevel) io.Writer {
+func DefaultGetWriter(rc *RConf, level RLevel) io.Writer {
 	if w, ok := rc.MapWriter[level]; ok {
 		return w
 	} else if rc.DefaultWriter != nil {
@@ -103,12 +102,15 @@ func (rc RConf) GetWriter(level RLevel) io.Writer {
 		}
 	}
 }
+func (rc *RConf) GetWriter(level RLevel) io.Writer {
+	return DefaultGetWriter(rc, level)
+}
 
 func (rc *RConf) SetRootRLevel(level RLevel) {
 	rc.RootLevel = level
 }
 
-func (rc RConf) IsDebug() bool {
+func (rc *RConf) IsDebug() bool {
 	return rc.Debug
 }
 

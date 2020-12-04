@@ -21,7 +21,7 @@ func itoa(i int, wid int) (buf []byte) {
 	buf = append(buf, b[bp:]...)
 	return
 }
-func formatHeader(buf *bytes.Buffer, t time.Time, pcInfo PcInfo, projectName string) {
+func formatHeader(buf *bytes.Buffer, t time.Time, pcInfo PcInfo, projectName, levelStr string) {
 	year, month, day := t.Date()
 	buf.Write(itoa(year, 4))
 	buf.WriteString("-")
@@ -53,5 +53,9 @@ func formatHeader(buf *bytes.Buffer, t time.Time, pcInfo PcInfo, projectName str
 
 	buf.WriteString("[")
 	buf.WriteString(GetFuncName(pcInfo, projectName))
+	buf.WriteString("] ")
+
+	buf.WriteString("[")
+	buf.WriteString(levelStr)
 	buf.WriteString("] ")
 }

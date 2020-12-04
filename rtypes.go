@@ -2,6 +2,7 @@ package rslog
 
 import (
 	"io"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -18,8 +19,8 @@ const (
 	LevelOFF
 )
 
-func (l RLevel) String() string {
-	switch l {
+func (level RLevel) String() string {
+	switch level {
 	case
 		LevelDEBUG:
 		return "DEBUG"
@@ -44,8 +45,9 @@ type PcInfo struct {
 	Ok   bool
 }
 
-func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
+var pkgCache = os.Getenv("GOMODCACHE")
 
+func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
 	for i := 1; i < 10; i++ {
 		pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + i)
 		if len(direct) > 0 && direct[0] {
@@ -54,7 +56,7 @@ func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo
 		if projectName == "" {
 			return
 		}
-		if strings.Contains(pcInfo.File, projectName) && !strings.Contains(pcInfo.File, "pkg") {
+		if strings.Contains(pcInfo.File, projectName) && strings.HasPrefix(pcInfo.File, pkgCache) {
 			return
 		}
 	}
@@ -85,6 +87,15 @@ type RsLogger interface {
 	SetRsLoggerConf(conf RsLoggerConfig)
 }
 
+type RsLoggerIProject interface {
+	SetProjectName(name string)
+}
+
+type RsLoggerILevel interface {
+	SetRLevel(level RLevel)
+	SetRootRLevel(level RLevel)
+}
+
 type RsLoggerI interface {
 	Debug(v ...interface{})
 	Info(v ...interface{})
@@ -94,7 +105,4 @@ type RsLoggerI interface {
 	InfoF(f string, v ...interface{})
 	WarnF(f string, v ...interface{})
 	ErrorF(f string, v ...interface{})
-	SetProjectName(name string)
-	SetRLevel(level RLevel)
-	SetRootRLevel(level RLevel)
 }
