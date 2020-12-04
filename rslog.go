@@ -3,7 +3,7 @@ package rslog
 import (
 	"bytes"
 	"fmt"
-	"os"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -140,7 +140,15 @@ func (rl *RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
 var lineSeparator string
 
 func init() {
-	lineSeparator = os.Getenv("line.separator")
+	lineSeparator = "\r\n"
+	switch runtime.GOOS {
+	case "windows":
+		lineSeparator = "\r\n"
+	case "linux":
+		lineSeparator = "\n"
+	case "darwin":
+		lineSeparator = "\r"
+	}
 }
 
 func (rl *RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {

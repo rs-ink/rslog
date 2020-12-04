@@ -4,6 +4,7 @@ import (
 	"github.com/rs-ink/rslog"
 	"io/ioutil"
 	"os"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -22,7 +23,11 @@ func (w writer) Write(p []byte) (n int, err error) {
 }
 
 func TestRsLog(t *testing.T) {
-	rslog.Warn("asdfasdfasdf")
+	envs := syscall.Environ()
+	for _, env := range envs {
+		rslog.Warn(env)
+	}
+
 }
 
 func BenchmarkRsLog(b *testing.B) {
