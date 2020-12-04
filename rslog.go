@@ -20,11 +20,8 @@ func init() {
 	DefaultRsLog = NewRsLog(true)
 }
 
-var defaultProjectName = ProjectName()
-
 func NewRsLog(direct ...bool) *RsLog {
 	conf := NewRConf(direct...)
-	conf.SetProjectName(defaultProjectName)
 	return &RsLog{
 		Conf: conf,
 	}
