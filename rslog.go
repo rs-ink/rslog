@@ -147,8 +147,6 @@ func init() {
 		lineSeparator = "\r\n"
 	case "linux":
 		lineSeparator = "\n"
-	case "darwin":
-		lineSeparator = "\r"
 	}
 }
 
