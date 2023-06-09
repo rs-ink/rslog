@@ -35,8 +35,12 @@ type RsLoggerErrorGetter interface {
 }
 
 func AssertError(err error, throwError ...error) {
+	DefaultRsLog.AssertError(err, throwError...)
+}
+
+func (r RsLog) AssertError(err error, throwError ...error) {
 	if err != nil {
-		Out(1, LevelERROR, err)
+		r.Out(1, LevelERROR, err)
 		if len(throwError) > 0 && throwError[0] != nil {
 			panic(throwError[0])
 		} else {
