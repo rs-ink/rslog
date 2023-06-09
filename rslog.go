@@ -30,6 +30,21 @@ func (r *RsLog) C(ctx context.Context) *RsLog {
 	}
 }
 
+type RsLoggerErrorGetter interface {
+	GetError() error
+}
+
+func AssertError(err error, throwError ...error) {
+	if err != nil {
+		Out(1, LevelERROR, err)
+		if len(throwError) > 0 && throwError[0] != nil {
+			panic(throwError[0])
+		} else {
+			panic(err)
+		}
+	}
+}
+
 func C(ctx context.Context) *RsLog {
 	return DefaultRsLog.C(ctx)
 }
