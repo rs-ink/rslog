@@ -51,7 +51,7 @@ func RegisterFormatWithContext(format RLogFormatWithContext) {
 }
 
 var defaultRLogFormatFWithContext RLogFormatFWithContext = func(ctx context.Context, f string, v ...interface{}) string {
-	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 {
+	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 && ctx != nil {
 		sb := bytes.NewBufferString("")
 		for _, key := range rLogFormatContextKeys {
 			v := ctx.Value(key)
@@ -68,7 +68,7 @@ var defaultRLogFormatFWithContext RLogFormatFWithContext = func(ctx context.Cont
 }
 
 var defaultRLogFormatWithContext RLogFormatWithContext = func(ctx context.Context, v ...interface{}) string {
-	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 {
+	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 && ctx != nil {
 		sb := bytes.NewBufferString("")
 		for _, key := range rLogFormatContextKeys {
 			v := ctx.Value(key)
