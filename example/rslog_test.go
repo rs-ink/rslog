@@ -1,6 +1,7 @@
 package example
 
 import (
+	"context"
 	"github.com/rs-ink/rslog"
 	"io/ioutil"
 	"os"
@@ -43,6 +44,14 @@ func TestRsLog(t *testing.T) {
 	for _, arg := range buildArgs {
 		rslog.Warn(arg)
 	}
+}
+
+func TestWithContext(t *testing.T) {
+	ctx := context.WithValue(context.Background(), "ip", "127.0.0.1")
+	ctx = context.WithValue(ctx, "requestId", "123123")
+	rslog.RegisterRLogFormatContextKey([]string{"requestId", "ips"})
+	l := rslog.C(ctx)
+	l.Info("asdfasdfasdfasdf")
 }
 
 func BenchmarkRsLog(b *testing.B) {

@@ -1,6 +1,9 @@
 package rslog
 
 import (
+	"bytes"
+	"context"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -17,6 +20,68 @@ type RConf struct {
 	direct        bool
 	mu            sync.Mutex
 	MapLevel      *sync.Map
+}
+
+type RLogFormatWithContext func(ctx context.Context, v ...interface{}) string
+
+type RLogFormatFWithContext func(ctx context.Context, f string, v ...interface{}) string
+
+var rLogFormatContextKeys []string
+
+func init() {
+	rLogFormatContextKeys = make([]string, 0)
+}
+
+func RegisterRLogFormatContextKey(keys []string) {
+	if keys != nil && len(keys) > 0 {
+		rLogFormatContextKeys = keys
+	}
+}
+
+func RegisterFormatFWithContext(formatF RLogFormatFWithContext) {
+	if formatF != nil {
+		defaultRLogFormatFWithContext = formatF
+	}
+}
+
+func RegisterFormatWithContext(format RLogFormatWithContext) {
+	if format != nil {
+		defaultRLogFormatWithContext = format
+	}
+}
+
+var defaultRLogFormatFWithContext RLogFormatFWithContext = func(ctx context.Context, f string, v ...interface{}) string {
+	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 {
+		sb := bytes.NewBufferString("")
+		for _, key := range rLogFormatContextKeys {
+			v := ctx.Value(key)
+			if v != nil {
+				sb.WriteString(fmt.Sprintf("[%v] ", v))
+			} else {
+				sb.WriteString("[] ")
+			}
+		}
+		return fmt.Sprintf("%s%s", sb.String(), fmt.Sprintf(f, v...))
+	} else {
+		return fmt.Sprintf("%s", fmt.Sprintf(f, v...))
+	}
+}
+
+var defaultRLogFormatWithContext RLogFormatWithContext = func(ctx context.Context, v ...interface{}) string {
+	if rLogFormatContextKeys != nil && len(rLogFormatContextKeys) > 0 {
+		sb := bytes.NewBufferString("")
+		for _, key := range rLogFormatContextKeys {
+			v := ctx.Value(key)
+			if v != nil {
+				sb.WriteString(fmt.Sprintf("[%v] ", v))
+			} else {
+				sb.WriteString("[] ")
+			}
+		}
+		return fmt.Sprintf("%s%v", sb.String(), v)
+	} else {
+		return fmt.Sprintf("%v", v)
+	}
 }
 
 func (rc *RConf) IsDirect() bool {
@@ -44,7 +109,7 @@ func (rc *RConf) GetRLevelPc(info PcInfo) RLevel {
 	}
 }
 
-//代码段设置Level
+// 代码段设置Level
 func (rc *RConf) SetRLevel(level RLevel, callDepth int) {
 	pcInfo := GetPcInfo(callDepth+1, rc.ProjectName)
 	funcNames := GetRealFuncName(pcInfo, rc.ProjectName)

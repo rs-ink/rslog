@@ -37,7 +37,7 @@ func (level RLevel) String() string {
 	}
 }
 
-//指定显示路径页面info
+// 指定显示路径页面info
 type PcInfo struct {
 	Pc   uintptr
 	File string
@@ -50,7 +50,7 @@ var goROOT = os.Getenv("GOROOT")
 var goPath = os.Getenv("GOPATH")
 
 func GetPcInfo(callDepth int, projectName string, direct ...bool) (pcInfo PcInfo) {
-	for i := 1; i < 10; i++ {
+	for i := 1; i < 17; i++ {
 		pcInfo.Pc, pcInfo.File, pcInfo.Line, pcInfo.Ok = runtime.Caller(callDepth + i)
 		if len(direct) > 0 && direct[0] {
 			return

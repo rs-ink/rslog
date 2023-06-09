@@ -2,7 +2,7 @@ package rslog
 
 import (
 	"bytes"
-	"fmt"
+	"context"
 	"runtime"
 	"sync"
 	"time"
@@ -12,12 +12,26 @@ type RsLog struct {
 	Conf RsLoggerConfig
 	mu   sync.Mutex
 	buf  bytes.Buffer
+	ctx  context.Context
 }
 
 var DefaultRsLog *RsLog
 
 func init() {
 	DefaultRsLog = NewRsLog(true)
+}
+
+func (r *RsLog) C(ctx context.Context) *RsLog {
+	return &RsLog{
+		Conf: r.Conf,
+		mu:   sync.Mutex{},
+		buf:  bytes.Buffer{},
+		ctx:  ctx,
+	}
+}
+
+func C(ctx context.Context) *RsLog {
+	return DefaultRsLog.C(ctx)
 }
 
 func NewRsLog(direct ...bool) *RsLog {
@@ -86,56 +100,56 @@ func OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
 	DefaultRsLog.OutPc(pcInfo, level, v...)
 }
 
-func (rl *RsLog) SetProjectName(name string) {
-	rl.Conf.SetProjectName(name)
+func (r *RsLog) SetProjectName(name string) {
+	r.Conf.SetProjectName(name)
 }
 
-func (rl *RsLog) SetRLevel(level RLevel) {
-	rl.Conf.SetRLevel(level, 1)
+func (r *RsLog) SetRLevel(level RLevel) {
+	r.Conf.SetRLevel(level, 1)
 }
 
-func (rl *RsLog) SetRootRLevel(level RLevel) {
-	rl.Conf.SetRootRLevel(level)
+func (r *RsLog) SetRootRLevel(level RLevel) {
+	r.Conf.SetRootRLevel(level)
 }
 
-func (rl *RsLog) Debug(v ...interface{}) {
-	rl.Out(1, LevelDEBUG, v...)
+func (r *RsLog) Debug(v ...interface{}) {
+	r.Out(1, LevelDEBUG, v...)
 }
 
-func (rl *RsLog) Info(v ...interface{}) {
-	rl.Out(1, LevelINFO, v...)
+func (r *RsLog) Info(v ...interface{}) {
+	r.Out(1, LevelINFO, v...)
 }
 
-func (rl *RsLog) Warn(v ...interface{}) {
-	rl.Out(1, LevelWARN, v...)
+func (r *RsLog) Warn(v ...interface{}) {
+	r.Out(1, LevelWARN, v...)
 }
 
-func (rl *RsLog) Error(v ...interface{}) {
-	rl.Out(1, LevelERROR, v...)
+func (r *RsLog) Error(v ...interface{}) {
+	r.Out(1, LevelERROR, v...)
 }
 
-func (rl *RsLog) DebugF(f string, v ...interface{}) {
-	rl.OutF(1, LevelDEBUG, f, v...)
+func (r *RsLog) DebugF(f string, v ...interface{}) {
+	r.OutF(1, LevelDEBUG, f, v...)
 }
 
-func (rl *RsLog) InfoF(f string, v ...interface{}) {
-	rl.OutF(1, LevelINFO, f, v...)
+func (r *RsLog) InfoF(f string, v ...interface{}) {
+	r.OutF(1, LevelINFO, f, v...)
 }
 
-func (rl *RsLog) WarnF(f string, v ...interface{}) {
-	rl.OutF(1, LevelWARN, f, v...)
+func (r *RsLog) WarnF(f string, v ...interface{}) {
+	r.OutF(1, LevelWARN, f, v...)
 }
 
-func (rl *RsLog) ErrorF(f string, v ...interface{}) {
-	rl.OutF(1, LevelERROR, f, v...)
+func (r *RsLog) ErrorF(f string, v ...interface{}) {
+	r.OutF(1, LevelERROR, f, v...)
 }
 
-func (rl *RsLog) Out(callDepth int, level RLevel, v ...interface{}) {
-	rl.OutPc(GetPcInfo(callDepth+1, rl.Conf.GetProjectName(), rl.Conf.IsDirect()), level, v...)
+func (r *RsLog) Out(callDepth int, level RLevel, v ...interface{}) {
+	r.OutPc(GetPcInfo(callDepth+1, r.Conf.GetProjectName(), r.Conf.IsDirect()), level, v...)
 }
 
-func (rl *RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
-	rl.OutPcF(GetPcInfo(callDepth+1, rl.Conf.GetProjectName(), rl.Conf.IsDirect()), level, f, v...)
+func (r *RsLog) OutF(callDepth int, level RLevel, f string, v ...interface{}) {
+	r.OutPcF(GetPcInfo(callDepth+1, r.Conf.GetProjectName(), r.Conf.IsDirect()), level, f, v...)
 }
 
 var lineSeparator string
@@ -150,32 +164,32 @@ func init() {
 	}
 }
 
-func (rl *RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
-	targetLevel := rl.Conf.GetRLevelPc(pcInfo)
+func (r *RsLog) OutPc(pcInfo PcInfo, level RLevel, v ...interface{}) {
+	targetLevel := r.Conf.GetRLevelPc(pcInfo)
 	if level >= targetLevel {
-		rl.mu.Lock()
-		defer rl.mu.Unlock()
-		defer rl.buf.Reset()
-		formatHeader(&rl.buf, time.Now(), pcInfo, rl.Conf.GetProjectName(), level.String())
-		rl.buf.WriteString(fmt.Sprint(v...))
-		rl.buf.WriteString(lineSeparator)
-		Writer(rl.Conf.GetWriter(level), rl.buf)
+		r.mu.Lock()
+		defer r.mu.Unlock()
+		defer r.buf.Reset()
+		formatHeader(&r.buf, time.Now(), pcInfo, r.Conf.GetProjectName(), level.String())
+		r.buf.WriteString(defaultRLogFormatWithContext(r.ctx, v...))
+		r.buf.WriteString(lineSeparator)
+		Writer(r.Conf.GetWriter(level), r.buf)
 	}
 }
 
-func (rl *RsLog) OutPcF(pcInfo PcInfo, level RLevel, f string, v ...interface{}) {
-	targetLevel := rl.Conf.GetRLevelPc(pcInfo)
+func (r *RsLog) OutPcF(pcInfo PcInfo, level RLevel, f string, v ...interface{}) {
+	targetLevel := r.Conf.GetRLevelPc(pcInfo)
 	if level >= targetLevel {
-		rl.mu.Lock()
-		defer rl.mu.Unlock()
-		defer rl.buf.Reset()
-		formatHeader(&rl.buf, time.Now(), pcInfo, rl.Conf.GetProjectName(), level.String())
-		rl.buf.WriteString(fmt.Sprintf(f, v...))
-		rl.buf.WriteString(lineSeparator)
-		Writer(rl.Conf.GetWriter(level), rl.buf)
+		r.mu.Lock()
+		defer r.mu.Unlock()
+		defer r.buf.Reset()
+		formatHeader(&r.buf, time.Now(), pcInfo, r.Conf.GetProjectName(), level.String())
+		r.buf.WriteString(defaultRLogFormatFWithContext(r.ctx, f, v...))
+		r.buf.WriteString(lineSeparator)
+		Writer(r.Conf.GetWriter(level), r.buf)
 	}
 }
 
-func (rl *RsLog) SetRsLoggerConf(conf RsLoggerConfig) {
-	rl.Conf = conf
+func (r *RsLog) SetRsLoggerConf(conf RsLoggerConfig) {
+	r.Conf = conf
 }
